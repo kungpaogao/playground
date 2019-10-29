@@ -1,0 +1,12 @@
+.row {
+  width: auto;
+  display: flex;
+  width: 100%;
+}
+
+.square {
+  float: left;
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+}
