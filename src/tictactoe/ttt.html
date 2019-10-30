@@ -5,19 +5,41 @@
   <link rel="stylesheet" href="ttt.css" />
   <body>
     <div class="row">
-      <button class="square" id="sq0">0</button>
-      <button class="square" id="sq1">1</button>
-      <button class="square" id="sq2">2</button>
+      <button onclick="update(this.id)" class="square" id="sq0">
+        <div class="sqtext"></div>
+      </button>
+      <button onclick="update(this.id)" class="square" id="sq1">
+        <div class="sqtext"></div>
+      </button>
+      <button onclick="update(this.id)" class="square" id="sq2">
+        <div class="sqtext"></div>
+      </button>
     </div>
     <div class="row">
-      <button class="square" id="sq3">3</button>
-      <button class="square" id="sq4">4</button>
-      <button class="square" id="sq5">5</button>
+      <button onclick="update(this.id)" class="square" id="sq3">
+        <div class="sqtext"></div>
+      </button>
+      <button onclick="update(this.id)" class="square" id="sq4">
+        <div class="sqtext"></div>
+      </button>
+      <button onclick="update(this.id)" class="square" id="sq5">
+        <div class="sqtext"></div>
+      </button>
     </div>
     <div class="row">
-      <button class="square" id="sq6">6</button>
-      <button class="square" id="sq7">7</button>
-      <button class="square" id="sq8">8</button>
+      <button onclick="update(this.id)" class="square" id="sq6">
+        <div class="sqtext"></div>
+      </button>
+      <button onclick="update(this.id)" class="square" id="sq7">
+        <div class="sqtext"></div>
+      </button>
+      <button onclick="update(this.id)" class="square" id="sq8">
+        <div class="sqtext"></div>
+      </button>
+    </div>
+    <div class="row">
+      <button onclick="" class="action">Undo</button>
+      <button onclick="reset()" class="action">Reset</button>
     </div>
   </body>
   <script src="ttt.js"></script>

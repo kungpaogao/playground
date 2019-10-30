@@ -10,3 +10,12 @@
   height: 100px;
   border: 1px solid black;
 }
+
+.sqtext {
+  font-size: 2rem;
+}
+
+.action {
+  font-size: 1rem;
+  margin-right: 1rem;
+}
