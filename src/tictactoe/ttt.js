@@ -1,7 +1,7 @@
 console.log("loaded");
 
 let squares = Array.from(document.getElementsByClassName("square"));
-let table = document.getElementById("history");
+let tbody = document.getElementById("history").getElementsByTagName("tbody")[0];
 
 /**
  *  Holds objects of form: `{id: string, val: string}`
@@ -26,16 +26,38 @@ const sqName = {
 };
 
 /**
+ * Returns index of square `id` in `state` or -1 if `id` is not in `state`
+ * @param {string} id
+ */
+function getIndex(id) {
+  return state.map(sq => sq.id).indexOf(id);
+}
+
+/**
  * Checks if `state` contains a value for square `id`
  * @param {string} id
  */
 function hasKey(id) {
-  return state.map(sq => sq.id).indexOf(id) !== -1;
+  return getIndex(id) !== -1;
 }
 
 function updateText(id, txt) {
   let button = document.getElementById(id);
   button.childNodes.forEach(node => (node.innerText = txt));
+}
+
+/**
+ * Returns the state of square `id`; can be `X`, `O`, or `undefined`
+ * @param {string} id
+ */
+function getState(id) {
+  const index = getIndex(id);
+
+  if (index !== -1) {
+    return state[index].val;
+  } else {
+    return undefined;
+  }
 }
 
 /**
@@ -54,33 +76,55 @@ function update(id) {
 }
 
 function addHistory(st) {
-  desc = "Placed " + st.val + " at " + sqName[st.id];
-  event = { ind: history.length, desc: desc, st: state };
+  const desc = "Placed " + st.val + " at " + sqName[st.id];
+  let copy = [...state];
+  // const copy = state;
+  // let copy = [];
+  // for (const s in state) {
+  //   copy.push(s);
+  // }
+  const event = { ind: history.length, desc: desc, st: copy };
+  console.log("built event", event);
 
-  tBody = table.getElementsByTagName("tbody")[0];
-
-  let row = tBody.insertRow(-1);
+  let row = tbody.insertRow(-1);
   let index = row.insertCell(0);
   let action = row.insertCell(1);
   let jump = row.insertCell(2);
   index.innerHTML = event.ind;
   action.innerHTML = event.desc;
+  jump.innerHTML = event.st;
 
   history.push(event);
 }
 
 function buildHistory() {}
 
-function undo() {}
+function undo() {
+  // remove last event in history
+  history.pop();
+
+  // set state to the last state in history
+  if (history.length > 0) {
+    state = history[history.length - 1].st;
+    isX = state[state.length - 1].val == "O";
+  } else {
+    reset();
+  }
+
+  squares.forEach(sq =>
+    updateText(sq.id, hasKey(sq.id) ? getState(sq.id) : "")
+  );
+
+  tbody.deleteRow(-1);
+}
 
 function reset() {
   squares.forEach(sq => updateText(sq.id, ""));
   isX = true;
   state = [];
   history = [];
-  bodyRef = table.getElementsByTagName("tbody")[0];
-  console.log(bodyRef);
-  bodyRef.innerHTML = "";
+
+  tbody.innerHTML = "";
 }
 
 /**
@@ -107,21 +151,38 @@ function assert(pass, name) {
  * @param {string} title
  */
 function testHead(title) {
+  console.log(">>> tests:", title);
+
   let elem = document.createElement("div");
-  elem.className = "row";
+  elem.className = "row testhead";
   elem.innerText = title;
 
-  document.body.appendChild(document.createElement("br"));
   document.body.appendChild(elem);
 }
+
+/* ------ TEST CASES ------ */
 
 testHead("base cases");
 
 assert(true, "test pass");
 assert(false, "test fail");
 
+testHead("helper cases");
+
+update("sq1"); // X
+assert(getIndex("sq1") === 0, "getIndex returns correct index");
+assert(hasKey("sq1"), "hasKey returns true for key that exists");
+assert(getIndex("sq2") === -1, "getIndex returns -1 for invalid index");
+assert(!hasKey("sq2"), "hasKey returns false for key that doesn't exists");
+update("sq2"); // O
+assert(getIndex("sq2") === 1, "getIndex returns correct value after update");
+assert(getState("sq1") === "X", "getState returns correct value at square X");
+assert(getState("sq2") === "O", "getState returns correct value at square O");
+assert(getState("sq5") === undefined, "getState returns undefined");
+
 testHead("state cases");
 
+reset();
 update("sq1");
 update("sq2");
 update("sq3");
@@ -133,6 +194,18 @@ update("sq1");
 update("sq1");
 update("sq1");
 assert(state.length === 1, "no duplicates in state");
+
+testHead("history cases");
+
+reset();
+assert(history.length === 0, "history is init");
+update("sq0"); // X
+update("sq1"); // O
+assert(history.length === 2, "history is updated 2");
+update("sq2"); // X
+assert(history.length === 3, "history is updated 3");
+assert(history[1].st.length === 2, "history stores correct state 2");
+assert(history[2].st.length === 3, "history stores correct state 3");
 
 testHead("undo cases");
 
@@ -152,3 +225,11 @@ undo();
 update("sq4"); // X
 assert(state.length === 3, "undo reverts state w/ move after");
 assert(state[state.length - 1].val === "X", "still gets correct move");
+
+reset();
+update("sq1"); // X
+undo();
+assert(history.length === 0, "can undo first move");
+assert(state.length === 0, "state is clean");
+
+reset();
