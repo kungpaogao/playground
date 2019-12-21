@@ -1,4 +1,4 @@
-console.log("loaded");
+console.log("----- TTT loaded -----");
 
 let squares = Array.from(document.getElementsByClassName("square"));
 let tbody = document.getElementById("history").getElementsByTagName("tbody")[0];
@@ -13,6 +13,9 @@ let state = [];
 let history = [];
 let isX = true;
 
+/**
+ * Dictionary mapping square `id` to square name
+ */
 const sqName = {
   sq0: "Square 1",
   sq1: "Square 2",
@@ -47,7 +50,7 @@ function updateText(id, txt) {
 }
 
 /**
- * Returns the state of square `id`; can be `X`, `O`, or `undefined`
+ * Returns the state of square `id`; can be `X`, `O`, or `null`
  * @param {string} id
  */
 function getState(id) {
@@ -56,7 +59,7 @@ function getState(id) {
   if (index !== -1) {
     return state[index].val;
   } else {
-    return undefined;
+    return null;
   }
 }
 
@@ -75,6 +78,10 @@ function update(id) {
   }
 }
 
+/**
+ * Adds current state to `history` and adds to HTML table
+ * @param {state} st
+ */
 function addHistory(st) {
   const desc = "Placed " + st.val + " at " + sqName[st.id];
   let copy = [...state];
@@ -99,6 +106,9 @@ function addHistory(st) {
 
 function buildHistory() {}
 
+/**
+ * Removes last event from `history` and goes to the previous state
+ */
 function undo() {
   // remove last event in history
   history.pop();
@@ -118,6 +128,9 @@ function undo() {
   tbody.deleteRow(-1);
 }
 
+/**
+ * Resets the state of the game to initial
+ */
 function reset() {
   squares.forEach(sq => updateText(sq.id, ""));
   isX = true;
@@ -178,7 +191,7 @@ update("sq2"); // O
 assert(getIndex("sq2") === 1, "getIndex returns correct value after update");
 assert(getState("sq1") === "X", "getState returns correct value at square X");
 assert(getState("sq2") === "O", "getState returns correct value at square O");
-assert(getState("sq5") === undefined, "getState returns undefined");
+assert(getState("sq5") === null, "getState returns null");
 
 testHead("state cases");
 
