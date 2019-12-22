@@ -6,6 +6,7 @@ let tbody = document.getElementById("history").getElementsByTagName("tbody")[0];
 /**
  *  Holds objects of form: `{id: string, val: string}`
  */
+// TODO: make state a dictionary: id -> val
 let state = [];
 /**
  * Holds objects of form: `{ind: number, desc: string, st: list }`
@@ -13,19 +14,20 @@ let state = [];
 let history = [];
 let isX = true;
 
+/* ----- HELPER METHODS ----- */
 /**
- * Dictionary mapping square `id` to square name
+ * Dictionary mapping square `id` to square name and number
  */
-const sqName = {
-  sq0: "Square 1",
-  sq1: "Square 2",
-  sq2: "Square 3",
-  sq3: "Square 4",
-  sq4: "Square 5",
-  sq5: "Square 6",
-  sq6: "Square 7",
-  sq7: "Square 8",
-  sq8: "Square 9"
+const sqMap = {
+  sq0: ["Square 1", 1],
+  sq1: ["Square 2", 2],
+  sq2: ["Square 3", 3],
+  sq3: ["Square 4", 4],
+  sq4: ["Square 5", 5],
+  sq5: ["Square 6", 6],
+  sq6: ["Square 7", 7],
+  sq7: ["Square 8", 8],
+  sq8: ["Square 9", 9]
 };
 
 /**
@@ -53,7 +55,7 @@ function updateText(id, txt) {
  * Returns the state of square `id`; can be `X`, `O`, or `null`
  * @param {string} id
  */
-function getState(id) {
+function getValue(id) {
   const index = getIndex(id);
 
   if (index !== -1) {
@@ -63,9 +65,101 @@ function getState(id) {
   }
 }
 
+/* ---- GAME FUNCTIONS ----- */
+
+/**
+ * Checks to see if anyone has won on the board given the most recently updated
+ * square `id` with value `val`
+ * @param {string} id
+ */
+function checkWin(id, val) {
+  console.log("squareMap", sqMap[id]);
+  const num = sqMap[id][1] - 1;
+  const row = Math.trunc(num / 3);
+  const col = num % 3;
+
+  // check cols
+  if (col === 0) {
+    // non-null and equal in column
+    if (
+      getValue("sq0") === val &&
+      getValue("sq0") === getValue("sq3") &&
+      getValue("sq3") === getValue("sq6")
+    ) {
+      return true;
+    }
+  } else if (col === 1) {
+    if (
+      getValue("sq1") === val &&
+      getValue("sq1") === getValue("sq4") &&
+      getValue("sq4") === getValue("sq7")
+    ) {
+      return true;
+    }
+  } else {
+    if (
+      getValue("sq2") === val &&
+      getValue("sq2") === getValue("sq5") &&
+      getValue("sq5") === getValue("sq8")
+    ) {
+      return true;
+    }
+  }
+
+  // check rows
+  if (row === 0) {
+    // non-null and equal in row
+    if (
+      getValue("sq0") === val &&
+      getValue("sq0") === getValue("sq1") &&
+      getValue("sq1") === getValue("sq2")
+    ) {
+      return true;
+    }
+  } else if (row === 1) {
+    if (
+      getValue("sq3") === val &&
+      getValue("sq3") === getValue("sq4") &&
+      getValue("sq4") === getValue("sq5")
+    ) {
+      return true;
+    }
+  } else {
+    if (
+      getValue("sq6") === val &&
+      getValue("sq6") === getValue("sq7") &&
+      getValue("sq7") === getValue("sq8")
+    ) {
+      return true;
+    }
+  }
+
+  // check diagonals
+  if (num === 0 || num === 4 || num === 8) {
+    if (
+      getValue("sq0") === val &&
+      getValue("sq0") === getValue("sq4") &&
+      getValue("sq4") === getValue("sq8")
+    ) {
+      return true;
+    }
+  }
+  if (num === 2 || num === 4 || num === 6) {
+    if (
+      getValue("sq2") === val &&
+      getValue("sq2") === getValue("sq4") &&
+      getValue("sq4") === getValue("sq6")
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 /**
  * Updates `state` when a square is triggered
- * @param {string} id
+ * @param {string} id - valid square id in state
  */
 function update(id) {
   let l = isX ? "X" : "O";
@@ -83,15 +177,10 @@ function update(id) {
  * @param {state} st
  */
 function addHistory(st) {
-  const desc = "Placed " + st.val + " at " + sqName[st.id];
+  const desc = "Placed " + st.val + " at " + sqMap[st.id][0];
   let copy = [...state];
-  // const copy = state;
-  // let copy = [];
-  // for (const s in state) {
-  //   copy.push(s);
-  // }
   const event = { ind: history.length, desc: desc, st: copy };
-  console.log("built event", event);
+  // console.log("built event", event);
 
   let row = tbody.insertRow(-1);
   let index = row.insertCell(0);
@@ -104,7 +193,13 @@ function addHistory(st) {
   history.push(event);
 }
 
-function buildHistory() {}
+/**
+ * Builds history given the event index
+ * @param {number} index
+ */
+function buildHistory(index) {
+  const event = history[index];
+}
 
 /**
  * Removes last event from `history` and goes to the previous state
@@ -122,7 +217,7 @@ function undo() {
   }
 
   squares.forEach(sq =>
-    updateText(sq.id, hasKey(sq.id) ? getState(sq.id) : "")
+    updateText(sq.id, hasKey(sq.id) ? getValue(sq.id) : "")
   );
 
   tbody.deleteRow(-1);
@@ -189,9 +284,11 @@ assert(getIndex("sq2") === -1, "getIndex returns -1 for invalid index");
 assert(!hasKey("sq2"), "hasKey returns false for key that doesn't exists");
 update("sq2"); // O
 assert(getIndex("sq2") === 1, "getIndex returns correct value after update");
-assert(getState("sq1") === "X", "getState returns correct value at square X");
-assert(getState("sq2") === "O", "getState returns correct value at square O");
-assert(getState("sq5") === null, "getState returns null");
+assert(getValue("sq1") === "X", "getValue returns correct value at square X");
+assert(getValue("sq2") === "O", "getValue returns correct value at square O");
+assert(getValue("sq5") === null, "getValue returns null");
+assert(sqMap["sq0"][0] === "Square 1", "square map 0 returns name");
+assert(sqMap["sq0"][1] === 1, "square map 1 returns number");
 
 testHead("state cases");
 
@@ -244,5 +341,18 @@ update("sq1"); // X
 undo();
 assert(history.length === 0, "can undo first move");
 assert(state.length === 0, "state is clean");
+
+testHead("win cases");
+
+reset();
+update("sq0"); // X
+assert(!checkWin("sq0", "X"), "win check fails with one move");
+update("sq8"); // O
+update("sq1"); // X
+update("sq5"); // O
+assert(!checkWin("sq5", "O"), "win check returns false");
+update("sq2"); // X
+assert(checkWin("sq2", "X"), "win check returns true");
+update("sq4"); // O
 
 reset();
