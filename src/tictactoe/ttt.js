@@ -1,7 +1,10 @@
 console.log("----- TTT loaded -----");
 
-let squares = Array.from(document.getElementsByClassName("square"));
-let tbody = document.getElementById("history").getElementsByTagName("tbody")[0];
+const squares = Array.from(document.getElementsByClassName("square"));
+const tbody = document
+  .getElementById("history")
+  .getElementsByTagName("tbody")[0];
+const winMessage = document.getElementById("winMessage");
 
 /**
  *  Holds objects of form: `{id: string, val: string}`
@@ -13,6 +16,7 @@ let state = [];
  */
 let history = [];
 let isX = true;
+let disabled = false;
 
 /* ----- HELPER METHODS ----- */
 /**
@@ -63,6 +67,15 @@ function getValue(id) {
   } else {
     return null;
   }
+}
+
+/**
+ * Rebuilds board with to reflect current state
+ */
+function buildBoard() {
+  squares.forEach(sq =>
+    updateText(sq.id, hasKey(sq.id) ? getValue(sq.id) : "")
+  );
 }
 
 /* ---- GAME FUNCTIONS ----- */
@@ -163,13 +176,17 @@ function checkWin(id, val) {
  * @param {string} id - valid square id in state
  */
 function update(id) {
-  let l = isX ? "X" : "O";
-  if (!hasKey(id)) {
-    updateText(id, l);
-    st = { id: id, val: l };
+  let val = isX ? "X" : "O";
+  if (!hasKey(id) && !disabled) {
+    updateText(id, val);
+    st = { id: id, val: val };
     state.push(st);
     isX = !isX;
     addHistory(st);
+  }
+  if (checkWin(id, val)) {
+    winMessage.innerHTML = `${val} has won!`;
+    disabled = true;
   }
 }
 
@@ -192,21 +209,12 @@ function addHistory(st) {
   const button = document.createElement("button");
   button.innerHTML = "Jump back to this action";
   button.addEventListener("click", () => {
-    alert(event.ind);
+    buildHistory(event.ind);
   });
 
   jump.appendChild(button);
 
   history.push(event);
-}
-
-/**
- * Rebuilds board with to reflect current state
- */
-function buildBoard() {
-  squares.forEach(sq =>
-    updateText(sq.id, hasKey(sq.id) ? getValue(sq.id) : "")
-  );
 }
 
 /**
@@ -229,6 +237,11 @@ function buildHistory(index) {
 
   // set history
   history = history.slice(0, index + 1);
+
+  if (disabled) {
+    disabled = false;
+    winMessage.innerHTML = "";
+  }
 }
 
 /**
@@ -246,6 +259,11 @@ function undo() {
     reset();
   }
 
+  if (disabled) {
+    disabled = false;
+    winMessage.innerHTML = "";
+  }
+
   buildBoard();
 
   tbody.deleteRow(-1);
@@ -258,8 +276,10 @@ function reset() {
   isX = true;
   state = [];
   history = [];
+  disabled = false;
 
   buildBoard();
 
   tbody.innerHTML = "";
+  winMessage.innerHTML = "";
 }

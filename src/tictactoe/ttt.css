@@ -1,7 +1,21 @@
+.game {
+  /* width: 50%; */
+  margin: 0 auto;
+}
+
 .row {
-  width: auto;
   display: flex;
   width: 100%;
+}
+
+.row-action {
+  margin-top: 2rem;
+}
+
+.center {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .square {

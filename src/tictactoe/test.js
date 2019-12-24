@@ -151,3 +151,5 @@ buildHistory(2);
 assert(state.length === 3, "state is correct size after build");
 assert(history.length === 3, "history is correct size after build");
 assert(!isX, "next move is right");
+
+reset();

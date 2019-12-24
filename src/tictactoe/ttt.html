@@ -7,43 +7,48 @@
     <title>Tic Tac Toe</title>
   </head>
   <body>
-    <div class="row">
-      <button onclick="update(this.id)" class="square" id="sq0">
-        <div class="sqtext"></div>
-      </button>
-      <button onclick="update(this.id)" class="square" id="sq1">
-        <div class="sqtext"></div>
-      </button>
-      <button onclick="update(this.id)" class="square" id="sq2">
-        <div class="sqtext"></div>
-      </button>
+    <div class="game center">
+      <h1>Tic Tac Toe</h1>
+      <h2 id="winMessage"></h2>
+      <div class="row center">
+        <button onclick="update(this.id)" class="square" id="sq0">
+          <div class="sqtext"></div>
+        </button>
+        <button onclick="update(this.id)" class="square" id="sq1">
+          <div class="sqtext"></div>
+        </button>
+        <button onclick="update(this.id)" class="square" id="sq2">
+          <div class="sqtext"></div>
+        </button>
+      </div>
+      <div class="row center">
+        <button onclick="update(this.id)" class="square" id="sq3">
+          <div class="sqtext"></div>
+        </button>
+        <button onclick="update(this.id)" class="square" id="sq4">
+          <div class="sqtext"></div>
+        </button>
+        <button onclick="update(this.id)" class="square" id="sq5">
+          <div class="sqtext"></div>
+        </button>
+      </div>
+      <div class="row center">
+        <button onclick="update(this.id)" class="square" id="sq6">
+          <div class="sqtext"></div>
+        </button>
+        <button onclick="update(this.id)" class="square" id="sq7">
+          <div class="sqtext"></div>
+        </button>
+        <button onclick="update(this.id)" class="square" id="sq8">
+          <div class="sqtext"></div>
+        </button>
+      </div>
+      <div class="row center row-action">
+        <button onclick="undo()" class="action">Undo</button>
+        <button onclick="reset()" class="action">Reset</button>
+      </div>
     </div>
-    <div class="row">
-      <button onclick="update(this.id)" class="square" id="sq3">
-        <div class="sqtext"></div>
-      </button>
-      <button onclick="update(this.id)" class="square" id="sq4">
-        <div class="sqtext"></div>
-      </button>
-      <button onclick="update(this.id)" class="square" id="sq5">
-        <div class="sqtext"></div>
-      </button>
-    </div>
-    <div class="row">
-      <button onclick="update(this.id)" class="square" id="sq6">
-        <div class="sqtext"></div>
-      </button>
-      <button onclick="update(this.id)" class="square" id="sq7">
-        <div class="sqtext"></div>
-      </button>
-      <button onclick="update(this.id)" class="square" id="sq8">
-        <div class="sqtext"></div>
-      </button>
-    </div>
-    <div class="row">
-      <button onclick="undo()" class="action">Undo</button>
-      <button onclick="reset()" class="action">Reset</button>
-    </div>
+
     <div class="row title">
       <h2>Moves</h2>
     </div>
