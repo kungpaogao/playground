@@ -24,4 +24,9 @@ function createTestHeader(title) {
 
 createTestHeader("base cases");
 createTest(true, "true test");
-createTest(true, "false test");
+createTest(false, "false test");
+
+createTestHeader("getRCfromId");
+const rc = getRCfromId("15x2");
+createTest(rc.row === 15, "correct row");
+createTest(rc.col === 2, "correct col");

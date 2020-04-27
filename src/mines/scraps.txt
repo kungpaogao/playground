@@ -1,0 +1,32 @@
+ // corners
+  if (r === 0 && c === 0) {
+    // top left corner
+    let count = 0;
+    if (gameState[r][c + 1].value === BOMB) {
+      count += 1;
+    }
+    if (gameState[r + 1][c + 1].value === BOMB) {
+      count += 1;
+    }
+    if (gameState[r + 1][c].value === BOMB) {
+      count += 1;
+    }
+    return count;
+  } else if (r === 0 && c === numCols - 1) {
+    // top right corner
+  } else if (r === numRows - 1 && c === 0) {
+    // bottom left corner
+  } else if (r === numRows - 1 && c === numCols - 1) {
+    // bottom right corner
+  }
+
+  // edges
+  if (r === 0) {
+    // top edge
+  } else if (c === numCols - 1) {
+    // right edge
+  } else if (r === numRows - 1) {
+    // bottom edge
+  } else if (c === 0) {
+    // left edge
+  }
