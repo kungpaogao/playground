@@ -1,3 +1,5 @@
+console.log("----- MINES LOADED -----");
+
 /**
  * Square display states
  */
@@ -20,14 +22,21 @@ let numBombs = 0;
 let numCovered = 0;
 
 /**
+ * Board information
+ */
+let numRows = 0;
+let numCols = 0;
+
+/**
  * List of rows which are lists of squares that contain the state of each game
  * square: {
  *   id: string;
  *   display: EXPLODED | HIDDEN | REVEALED | FLAGGED | QUESTION;
  *   value: BOMB | number;
  * }
+ * `id` consists of `${row}x${col}`
  */
-let gameState = [];
+let gameState = [{ id: "0x0", display: HIDDEN, value: BOMB }];
 
 /**
  * Initializes game state: bombs, square values
@@ -38,12 +47,46 @@ let gameState = [];
 function generateGame(r, c, n) {}
 
 /**
- * Calculates the number of mines surrounding a square
- * @param {number} r - number of rows
- * @param {number} c - number of columns
+ * Returns object with computed row and column properties from `id`
  * @param {string} id - square id
  */
-function calculateNum(r, c, id) {}
+function getRCfromId(id) {
+  const split = id.split("x");
+  const row = Number.parseInt(split[0]);
+  const col = Number.parseInt(split[1]);
+  return { row, col };
+}
+
+/**
+ * Calculates the number of mines surrounding a square
+ * @param {string} id - square id
+ */
+function calculateNum(id) {
+  const rc = getRCfromId(id);
+  const r = rc.row;
+  const c = rc.col;
+
+  const surround = [
+    { row: r - 1, col: c - 1 },
+    { row: r - 1, col: c },
+    { row: r - 1, col: c + 1 },
+    { row: r, col: c + 1 },
+    { row: r + 1, col: c + 1 },
+    { row: r + 1, col: c },
+    { row: r + 1, col: c - 1 },
+    { row: r, col: c - 1 },
+  ];
+
+  let count = 0;
+
+  surround.forEach(({ row, col }) => {
+    if (!(row < 0 || row >= numRows || col < 0 || col >= numCols)) {
+      count += gameState[row][col].value === BOMB ? 1 : 0;
+    }
+  });
+
+  return count;
+}
 
 /**
  * Displays the game by creating tiles for each square in `gameState`
@@ -66,7 +109,7 @@ function updateDisplay(id, val) {}
 
 /**
  * Called on left click
- * Reveals square and empty slots
+ * Reveals square and adjacent empty slots (recursively)
  * @param {string} id - square id
  */
 function revealSquare(id) {}
