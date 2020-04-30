@@ -36,7 +36,7 @@ let numCols = 0;
  * }
  * `id` consists of `${row}x${col}`
  */
-let gameState = [{ id: "0x0", display: HIDDEN, value: BOMB }];
+let gameState = [[{ id: "0x0", display: HIDDEN, value: BOMB }]];
 
 /**
  * Initializes game state: bombs, square values
@@ -80,6 +80,7 @@ function calculateNum(id) {
   let count = 0;
 
   surround.forEach(({ row, col }) => {
+    // check to make sure coords are in bounds
     if (!(row < 0 || row >= numRows || col < 0 || col >= numCols)) {
       count += gameState[row][col].value === BOMB ? 1 : 0;
     }
@@ -91,7 +92,25 @@ function calculateNum(id) {
 /**
  * Displays the game by creating tiles for each square in `gameState`
  */
-function displayGame() {}
+function displayGame() {
+  const gameCanvas = document.getElementById("gameCanvas");
+
+  gameState.forEach((row, index) => {
+    let gameRow = document.createElement("div");
+    gameRow.id = `row${index}`;
+    gameRow.className = "game-row";
+
+    row.forEach(({ id, display, value }) => {
+      let square = document.createElement("div");
+      square.id = id;
+      square.innerText = value;
+      // TODO: add conditions for displaying the square
+      gameRow.appendChild(square);
+    });
+
+    gameCanvas.appendChild(gameRow);
+  });
+}
 
 /**
  * Checks if player has won the game
