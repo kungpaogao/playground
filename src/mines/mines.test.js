@@ -30,3 +30,7 @@ createTestHeader("getRCfromId");
 const rc = getRCfromId("15x2");
 createTest(rc.row === 15, "correct row");
 createTest(rc.col === 2, "correct col");
+
+let canvasText = document.createElement("div");
+canvasText.innerText = "this is the gameCanvas";
+document.getElementById("gameCanvas").appendChild(canvasText);
