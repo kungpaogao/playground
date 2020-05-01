@@ -62,9 +62,7 @@ function getRCfromId(id) {
  * @param {string} id - square id
  */
 function calculateNum(id) {
-  const rc = getRCfromId(id);
-  const r = rc.row;
-  const c = rc.col;
+  const { row: r, col: c } = getRCfromId(id);
 
   const surround = [
     { row: r - 1, col: c - 1 },
@@ -120,25 +118,74 @@ function checkWin() {
 }
 
 /**
+ * Ends the game by either exploding all the bombs (when player loses) or
+ * ending the game with a win
+ * @param {boolean} win - true if player has won
+ */
+function endGame(win) {}
+
+/**
+ * TODO: is the display parameter necessary?
  * Updates the display state of a square
  * @param {string} id - square id
- * @param {EXPLODED | HIDDEN | REVEALED | FLAGGED | QUESTION} val - display
+ * @param {EXPLODED | HIDDEN | REVEALED | FLAGGED | QUESTION} display - display
  */
-function updateDisplay(id, val) {}
+function updateDisplay(id, display) {}
 
 /**
  * Called on left click
  * Reveals square and adjacent empty slots (recursively)
  * @param {string} id - square id
  */
-function revealSquare(id) {}
+function revealSquare(id) {
+  const { row, col } = getRCfromId(id);
+
+  const square = gameState[row][col];
+
+  if (square.display === HIDDEN) {
+    square.display = REVEALED;
+    numCovered -= 1;
+  }
+
+  if (square.value === BOMB) {
+    endGame(false);
+  }
+
+  if (checkWin()) {
+    endGame(true);
+  }
+
+  updateDisplay(square.id, square.display);
+}
 
 /**
  * Called on right click
  * Rotates through the right-click actions of a square: flag, question, empty
  * @param {string} id - square id
  */
-function flagSquare(id) {}
+function flagSquare(id) {
+  // TODO: some way of preventing this when board is disabled
+
+  const { row, col } = getRCfromId(id);
+
+  const square = gameState[row][col];
+
+  if (square.display === HIDDEN) {
+    square.display = FLAGGED;
+    numFlags += 1;
+  } else if (square.display === FLAGGED) {
+    square.display = QUESTION;
+    numFlags -= 1;
+  } else {
+    square.display = HIDDEN;
+  }
+
+  updateDisplay(square.id, square.display);
+
+  if (checkWin()) {
+    endGame(true);
+  }
+}
 
 /**
  * Called on double left click
