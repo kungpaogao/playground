@@ -152,4 +152,33 @@ assert(state.length === 3, "state is correct size after build");
 assert(history.length === 3, "history is correct size after build");
 assert(!isX, "next move is right");
 
+testHead("state tests");
+
 reset();
+update("sq4"); // X
+update("sq2"); // O
+const compare = [...history];
+update("sq3"); // X
+update("sq5"); // O
+
+reset();
+update("sq4"); // X
+buildHistory(0);
+const snapshot = [...history];
+assert(snapshot[0].st.length === 1, "snapshot length should be 1");
+assert(!isX, "next move should be an O");
+update("sq2"); // O
+assert(
+  compare.length === history.length,
+  "compare and history length should be same"
+);
+assert(
+  compare[1].st.length === history[1].st.length,
+  "compare and history state length should be same"
+);
+update("sq3"); // X
+update("sq5"); // O
+buildHistory(0);
+assert(snapshot[0].st.length, "snapshot state length should still be 1");
+assert(!isX, "next move should be an O, again");
+assert(state.length === 1, "state length should be 1");
