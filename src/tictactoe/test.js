@@ -182,3 +182,5 @@ buildHistory(0);
 assert(snapshot[0].st.length, "snapshot state length should still be 1");
 assert(!isX, "next move should be an O, again");
 assert(state.length === 1, "state length should be 1");
+
+reset();
