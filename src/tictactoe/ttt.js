@@ -31,7 +31,7 @@ const sqMap = {
   sq5: ["Square 6", 6],
   sq6: ["Square 7", 7],
   sq7: ["Square 8", 8],
-  sq8: ["Square 9", 9]
+  sq8: ["Square 9", 9],
 };
 
 /**
@@ -39,7 +39,7 @@ const sqMap = {
  * @param {string} id
  */
 function getIndex(id) {
-  return state.map(sq => sq.id).indexOf(id);
+  return state.map((sq) => sq.id).indexOf(id);
 }
 
 /**
@@ -52,7 +52,7 @@ function hasKey(id) {
 
 function updateText(id, txt) {
   let button = document.getElementById(id);
-  button.childNodes.forEach(node => (node.innerText = txt));
+  button.childNodes.forEach((node) => (node.innerText = txt));
 }
 
 /**
@@ -73,7 +73,8 @@ function getValue(id) {
  * Rebuilds board with to reflect current state
  */
 function buildBoard() {
-  squares.forEach(sq =>
+  console.log("buildBoard", state);
+  squares.forEach((sq) =>
     updateText(sq.id, hasKey(sq.id) ? getValue(sq.id) : "")
   );
 }
@@ -198,7 +199,6 @@ function addHistory(st) {
   const desc = "Placed " + st.val + " at " + sqMap[st.id][0];
   const copy = [...state];
   const event = { ind: history.length, desc: desc, st: copy };
-  // console.log("built event", event);
 
   const row = tbody.insertRow(-1);
   const index = row.insertCell(0);
@@ -222,13 +222,15 @@ function addHistory(st) {
  * @param {number} index
  */
 function buildHistory(index) {
+  console.log("buildHistory", index);
+
   const event = history[index];
 
   // set state
-  state = event.st;
+  state = [...event.st];
 
-  // set board
-  buildBoard();
+  // set isX
+  isX = state[state.length - 1].val === "O";
 
   // set history table
   for (let i = history.length; i > index + 1; i--) {
@@ -237,6 +239,9 @@ function buildHistory(index) {
 
   // set history
   history = history.slice(0, index + 1);
+
+  // set board
+  buildBoard();
 
   if (disabled) {
     disabled = false;
@@ -253,8 +258,8 @@ function undo() {
 
   // set state to the last state in history
   if (history.length > 0) {
-    state = history[history.length - 1].st;
-    isX = state[state.length - 1].val == "O";
+    state = [...history[history.length - 1].st];
+    isX = state[state.length - 1].val === "O";
   } else {
     reset();
   }
@@ -264,9 +269,9 @@ function undo() {
     winMessage.innerHTML = "";
   }
 
-  buildBoard();
-
   tbody.deleteRow(-1);
+
+  buildBoard();
 }
 
 /**
